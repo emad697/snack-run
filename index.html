@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="بازی هیجان‌انگیز فرار مار - تعقیب شیر. یک بازی آنلاین رایگان با حالت‌های مختلف و سازگار با موبایل و دسکتاپ.">
+    <meta name="keywords" content="بازی مار, بازی آنلاین, بازی رایگان, بازی موبایل, بازی دسکتاپ, تعقیب شیر">
+    <meta name="author" content="Emad">
+    <title>فرار مار - تعقیب شیر | بازی آنلاین رایگان</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #4ecca3;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #4ecca3;
+        }
+
+        #gameCanvas {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px solid #4ecca3;
+        }
+
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .controls p {
+            margin: 0.5rem 0;
+            color: #4ecca3;
+        }
+
+        .key {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(78, 204, 163, 0.2);
+            border: 1px solid #4ecca3;
+            border-radius: 5px;
+            margin: 0 0.2rem;
+        }
+
+        .start-button {
+            background: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin-top: 1rem;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            background: #45b392;
+        }
+
+        .game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(26, 26, 46, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-over h2 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .game-over p {
+            margin-bottom: 1.5rem;
+            color: #4ecca3;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 0;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+                max-width: 100%;
+            }
+
+            .controls {
+                display: none; /* Hide keyboard controls on mobile */
+            }
+
+            .mobile-controls {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .mobile-button {
+                background: rgba(78, 204, 163, 0.2);
+                border: 2px solid #4ecca3;
+                color: #4ecca3;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                cursor: pointer;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .mobile-button:active {
+                background: rgba(78, 204, 163, 0.4);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-controls {
+                display: none;
+            }
+        }
+
+        .mode-button {
+            background: #ff6b6b;
+            color: #1a1a2e;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin: 0.5rem;
+        }
+
+        .mode-button.active {
+            background: #ff4444;
+        }
+
+        .mode-button.cheat.active {
+            background: #ffd700;
+        }
+
+        .mode-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .restart-button {
+            background: #ff4444;
+            color: #1a1a2e;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            margin: 0.5rem;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-2px);
+            background: #ff2222;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .best-times {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #4ecca3;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .speed-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            color: #4ecca3;
+        }
+
+        .player-name {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #4ecca3;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .name-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(26, 26, 46, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .name-prompt input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #4ecca3;
+            color: #fff;
+            padding: 0.5rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .online-players {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            color: #4ecca3;
+            font-size: 1rem;
+        }
+
+        .online-players h3 {
+            margin-bottom: 0.5rem;
+            color: #4ecca3;
+        }
+
+        .player-item {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="name-prompt" id="namePrompt">
+        <h2>نام خود را وارد کنید</h2>
+        <input type="text" id="playerNameInput" placeholder="نام شما">
+        <button class="start-button" onclick="setPlayerName()">شروع</button>
+    </div>
+
+    <div class="online-players" id="onlinePlayers">
+        <h3>بازیکنان آنلاین</h3>
+        <div id="playersList"></div>
+    </div>
+
+    <div class="game-container">
+        <h1>فرار مار</h1>
+        <div class="game-stats">
+            <div>زمان: <span id="timer">0:00</span></div>
+            <div class="speed-stats">
+                <div>سرعت مار: <span id="speed">1x</span></div>
+                <div>سرعت شیرها: <span id="lionSpeeds">1</span></div>
+            </div>
+        </div>
+        <div class="best-times">
+            <div>بهترین زمان عادی: <span id="bestNormalTime">0:00</span></div>
+            <div>بهترین زمان سخت: <span id="bestHardTime">0:00</span></div>
+        </div>
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <p>از کلیدهای جهت‌دار برای کنترل مار استفاده کنید</p>
+            <div>
+                <span class="key">↑</span>
+                <span class="key">←</span>
+                <span class="key">↓</span>
+                <span class="key">→</span>
+            </div>
+        </div>
+        <div class="mobile-controls">
+            <button class="mobile-button" id="upBtn">↑</button>
+            <div>
+                <button class="mobile-button" id="leftBtn">←</button>
+                <button class="mobile-button" id="rightBtn">→</button>
+            </div>
+            <button class="mobile-button" id="downBtn">↓</button>
+        </div>
+        <div class="button-container">
+            <button class="start-button" onclick="startGame()">شروع بازی</button>
+            <button class="mode-button" id="hardModeBtn" onclick="toggleHardMode()">حالت سخت</button>
+            <button class="mode-button" id="cheatBtn" onclick="toggleCheat()">حالت تقلب</button>
+            <button class="restart-button" onclick="restartGame()">بازی مجدد</button>
+        </div>
+    </div>
+
+    <div class="game-over" id="gameOver">
+        <h2>بازی تمام شد!</h2>
+        <p id="gameOverMessage">شیر شما را گرفت!</p>
+        <button class="start-button" onclick="restartGame()">بازی مجدد</button>
+    </div>
+
+    <div class="player-name">Emad</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const timerElement = document.getElementById('timer');
+        const speedElement = document.getElementById('speed');
+        const gameOverElement = document.getElementById('gameOver');
+
+        let snake = {
+            x: 50,
+            y: 200,
+            size: 20,
+            speed: 5,
+            dx: 0,
+            dy: 0
+        };
+
+        let lions = []; // Array to store multiple lions
+        let fires = []; // Array to store fire projectiles
+        let gameLoop;
+        let timeInterval;
+        let gameTime = 0;
+        let currentSpeed = 1;
+        let isGameRunning = false;
+        let isHardMode = false;
+        let bestNormalTime = 0;
+        let bestHardTime = 0;
+        let isCheatMode = false;
+        let isFirstLionShooting = false;
+        let playerName = '';
+        let onlinePlayers = new Map(); // Store online players and their times
+
+        // Draw initial state
+        function drawInitialState() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw snake
+            ctx.fillStyle = '#4ecca3';
+            ctx.fillRect(snake.x, snake.y, snake.size, snake.size);
+            
+            // Draw lions
+            lions.forEach(lion => {
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillRect(lion.x, lion.y, lion.size, lion.size);
+            });
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateBestTime() {
+            if (gameTime > (isHardMode ? bestHardTime : bestNormalTime)) {
+                if (isHardMode) {
+                    bestHardTime = gameTime;
+                    document.getElementById('bestHardTime').textContent = formatTime(bestHardTime);
+                    if (playerName) {
+                        const playerData = onlinePlayers.get(playerName);
+                        if (playerData && gameTime > playerData.hardTime) {
+                            playerData.hardTime = gameTime;
+                            updatePlayersList();
+                        }
+                    }
+                } else {
+                    bestNormalTime = gameTime;
+                    document.getElementById('bestNormalTime').textContent = formatTime(bestNormalTime);
+                    if (playerName) {
+                        const playerData = onlinePlayers.get(playerName);
+                        if (playerData && gameTime > playerData.normalTime) {
+                            playerData.normalTime = gameTime;
+                            updatePlayersList();
+                        }
+                    }
+                }
+            }
+        }
+
+        function startGame() {
+            // Check if player has entered their name
+            if (!playerName) {
+                alert('لطفا اول نام خود را وارد کنید!');
+                document.getElementById('namePrompt').style.display = 'block';
+                return;
+            }
+
+            // Stop any existing game
+            if (gameLoop) clearInterval(gameLoop);
+            if (timeInterval) clearInterval(timeInterval);
+            
+            // Reset game state
+            isGameRunning = true;
+            gameTime = 0;
+            currentSpeed = 1;
+            
+            // Reset positions
+            snake.x = 50;
+            snake.y = 200;
+            snake.dx = 1; // Start moving right
+            snake.dy = 0;
+            
+            // Initialize lions array with one lion
+            lions = [{
+                x: 550,
+                y: 200,
+                size: 30,
+                speed: 3
+            }];
+            
+            // Hide game over screen
+            gameOverElement.style.display = 'none';
+            
+            // Reset timer display
+            timerElement.textContent = '0:00';
+            
+            // Reset speed display
+            speedElement.textContent = snake.speed.toString();
+            
+            // Reset fires array
+            fires = [];
+            isFirstLionShooting = false;
+            
+            // Start game loops
+            gameLoop = setInterval(update, 1000 / 60);
+            timeInterval = setInterval(updateTime, 1000);
+            
+            console.log('Game started successfully');
+        }
+
+        function update() {
+            if (!isGameRunning) return;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update lion speeds display
+            const lionSpeedsText = lions.map((lion, index) => `${index + 1}: ${lion.speed.toFixed(1)}`).join(', ');
+            document.getElementById('lionSpeeds').textContent = lionSpeedsText;
+
+            // Update snake position with current speed
+            snake.x += snake.dx * snake.speed * currentSpeed;
+            snake.y += snake.dy * snake.speed * currentSpeed;
+
+            // Check for wall collision in hard mode
+            if (isHardMode) {
+                if (snake.x <= 0 || snake.x >= canvas.width - snake.size ||
+                    snake.y <= 0 || snake.y >= canvas.height - snake.size) {
+                    gameOver('شما به دیوار برخورد کردید!');
+                    return;
+                }
+            } else {
+                // Keep snake in bounds (normal mode)
+                snake.x = Math.max(0, Math.min(canvas.width - snake.size, snake.x));
+                snake.y = Math.max(0, Math.min(canvas.height - snake.size, snake.y));
+            }
+
+            // Update and draw fires
+            for (let i = fires.length - 1; i >= 0; i--) {
+                const fire = fires[i];
+                fire.x += fire.dx;
+                fire.y += fire.dy;
+
+                // Draw fire
+                ctx.fillStyle = '#ff4400';
+                ctx.fillRect(fire.x, fire.y, fire.size, fire.size);
+
+                // Check fire collision with snake
+                if (!isCheatMode && checkCollision(snake, fire)) {
+                    gameOver('شما با آتش برخورد کردید!');
+                }
+
+                // Remove fire if it's out of bounds
+                if (fire.x < 0 || fire.x > canvas.width || fire.y < 0 || fire.y > canvas.height) {
+                    fires.splice(i, 1);
+                }
+            }
+
+            // Update and draw all lions
+            lions.forEach((lion, index) => {
+                if (index === 0 && isFirstLionShooting) {
+                    // First lion stays in the middle and shoots fire
+                    lion.x = canvas.width / 2 - lion.size / 2;
+                    lion.y = canvas.height / 2 - lion.size / 2;
+
+                    // Shoot fire every 2 seconds
+                    if (gameTime % 2 === 0) {
+                        const dx = snake.x - lion.x;
+                        const dy = snake.y - lion.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance > 0) {
+                            fires.push({
+                                x: lion.x + lion.size / 2,
+                                y: lion.y + lion.size / 2,
+                                size: 10,
+                                dx: (dx / distance) * 0.8,
+                                dy: (dy / distance) * 0.8
+                            });
+                        }
+                    }
+                } else {
+                    // Other lions chase the snake
+                    const dx = snake.x - lion.x;
+                    const dy = snake.y - lion.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 0) {
+                        lion.x += (dx / distance) * lion.speed * currentSpeed;
+                        lion.y += (dy / distance) * lion.speed * currentSpeed;
+                    }
+                }
+
+                // Draw lion
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillRect(lion.x, lion.y, lion.size, lion.size);
+
+                // Check collision with this lion (only if not in cheat mode)
+                if (!isCheatMode && checkCollision(snake, lion)) {
+                    gameOver('شیر شما را گرفت!');
+                }
+            });
+
+            // Draw snake with different color in cheat mode
+            ctx.fillStyle = isCheatMode ? '#ffd700' : '#4ecca3';
+            ctx.fillRect(snake.x, snake.y, snake.size, snake.size);
+        }
+
+        function checkCollision(snake, lion) {
+            return (
+                snake.x < lion.x + lion.size &&
+                snake.x + snake.size > lion.x &&
+                snake.y < lion.y + lion.size &&
+                snake.y + snake.size > lion.y
+            );
+        }
+
+        function gameOver(message) {
+            // Don't end game if cheat mode is active
+            if (isCheatMode) return;
+            
+            console.log('Game Over!');
+            clearInterval(gameLoop);
+            clearInterval(timeInterval);
+            isGameRunning = false;
+            updateBestTime();
+            document.getElementById('gameOverMessage').textContent = message;
+            gameOverElement.style.display = 'block';
+        }
+
+        function restartGame() {
+            // Check if player has entered their name
+            if (!playerName) {
+                alert('لطفا اول نام خود را وارد کنید!');
+                document.getElementById('namePrompt').style.display = 'block';
+                return;
+            }
+
+            console.log('Restarting game...');
+            // End current game if it's running
+            if (isGameRunning) {
+                clearInterval(gameLoop);
+                clearInterval(timeInterval);
+                isGameRunning = false;
+                updateBestTime();
+                document.getElementById('gameOverMessage').textContent = 'شما بازی را مجدداً شروع کردید!';
+                gameOverElement.style.display = 'block';
+                return;
+            }
+            // If game is not running, start a new game
+            startGame();
+        }
+
+        function updateTime() {
+            if (!isGameRunning) return;
+            
+            gameTime++;
+            const minutes = Math.floor(gameTime / 60);
+            const seconds = gameTime % 60;
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Spawn new lion every 30 seconds
+            if (gameTime % 30 === 0) {
+                // Calculate minimum lion speed based on snake's current speed
+                const snakeCurrentSpeed = snake.speed * currentSpeed;
+                const minLionSpeed = snakeCurrentSpeed * 0.6;
+                
+                // Get the speed of the last lion (or initial speed if no lions)
+                const lastLionSpeed = lions.length > 0 ? lions[lions.length - 1].speed : minLionSpeed;
+                const newLionSpeed = Math.max(lastLionSpeed + 0.5, minLionSpeed); // Each new lion is 0.5 faster, but never less than 0.6 of snake speed
+
+                // Spawn new lion at random position on the edges
+                const side = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+                let newLion = {
+                    size: 30,
+                    speed: newLionSpeed
+                };
+
+                switch(side) {
+                    case 0: // top
+                        newLion.x = Math.random() * canvas.width;
+                        newLion.y = -30;
+                        break;
+                    case 1: // right
+                        newLion.x = canvas.width;
+                        newLion.y = Math.random() * canvas.height;
+                        break;
+                    case 2: // bottom
+                        newLion.x = Math.random() * canvas.width;
+                        newLion.y = canvas.height;
+                        break;
+                    case 3: // left
+                        newLion.x = -30;
+                        newLion.y = Math.random() * canvas.height;
+                        break;
+                }
+
+                lions.push(newLion);
+
+                // If this is the second lion and we're in hard mode, make the first lion shoot fire
+                if (isHardMode && lions.length === 2) {
+                    isFirstLionShooting = true;
+                }
+            }
+
+            // Increase speed every 20 seconds
+            if (gameTime % 20 === 0) {
+                currentSpeed *= 1.5;
+                speedElement.textContent = (snake.speed * currentSpeed).toFixed(1);
+            }
+        }
+
+        // Handle keyboard input for PC
+        document.addEventListener('keydown', (e) => {
+            if (!isGameRunning) return;
+
+            switch (e.key) {
+                case 'ArrowUp':
+                    snake.dx = 0;
+                    snake.dy = -1;
+                    break;
+                case 'ArrowDown':
+                    snake.dx = 0;
+                    snake.dy = 1;
+                    break;
+                case 'ArrowLeft':
+                    snake.dx = -1;
+                    snake.dy = 0;
+                    break;
+                case 'ArrowRight':
+                    snake.dx = 1;
+                    snake.dy = 0;
+                    break;
+            }
+        });
+
+        // Add touch controls for mobile
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+
+        // Touch button controls
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isGameRunning) {
+                snake.dx = 0;
+                snake.dy = -1;
+            }
+        });
+
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isGameRunning) {
+                snake.dx = 0;
+                snake.dy = 1;
+            }
+        });
+
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isGameRunning) {
+                snake.dx = -1;
+                snake.dy = 0;
+            }
+        });
+
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (isGameRunning) {
+                snake.dx = 1;
+                snake.dy = 0;
+            }
+        });
+
+        // Add swipe controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, false);
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isGameRunning) return;
+
+            const touchEndX = e.touches[0].clientX;
+            const touchEndY = e.touches[0].clientY;
+
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            // Determine swipe direction
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal swipe
+                if (dx > 0) {
+                    snake.dx = 1;
+                    snake.dy = 0;
+                } else {
+                    snake.dx = -1;
+                    snake.dy = 0;
+                }
+            } else {
+                // Vertical swipe
+                if (dy > 0) {
+                    snake.dx = 0;
+                    snake.dy = 1;
+                } else {
+                    snake.dx = 0;
+                    snake.dy = -1;
+                }
+            }
+
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+        }, false);
+
+        // Prevent default touch behaviors
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        function toggleHardMode() {
+            // Don't allow mode change during gameplay
+            if (isGameRunning) {
+                alert('لطفا صبر کنید تا بازی تمام شود!');
+                return;
+            }
+
+            // If cheat mode is active, don't allow hard mode
+            if (isCheatMode) {
+                alert('لطفا اول حالت تقلب را غیرفعال کنید!');
+                return;
+            }
+
+            isHardMode = !isHardMode;
+            const hardModeBtn = document.getElementById('hardModeBtn');
+            hardModeBtn.classList.toggle('active');
+            hardModeBtn.textContent = isHardMode ? 'حالت سخت (فعال)' : 'حالت سخت';
+        }
+
+        function toggleCheat() {
+            // Don't allow mode change during gameplay
+            if (isGameRunning) {
+                alert('لطفا صبر کنید تا بازی تمام شود!');
+                return;
+            }
+
+            // If hard mode is active, don't allow cheat mode
+            if (isHardMode) {
+                alert('لطفا اول حالت سخت را غیرفعال کنید!');
+                return;
+            }
+
+            isCheatMode = !isCheatMode;
+            const cheatBtn = document.getElementById('cheatBtn');
+            cheatBtn.classList.toggle('active');
+            cheatBtn.textContent = isCheatMode ? 'حالت تقلب (فعال)' : 'حالت تقلب';
+        }
+
+        function setPlayerName() {
+            const nameInput = document.getElementById('playerNameInput');
+            playerName = nameInput.value.trim();
+            
+            if (playerName) {
+                document.getElementById('namePrompt').style.display = 'none';
+                document.querySelector('.player-name').textContent = playerName;
+                addPlayerToList(playerName);
+                drawInitialState();
+            } else {
+                alert('لطفا نام خود را وارد کنید!');
+            }
+        }
+
+        function addPlayerToList(name) {
+            if (!onlinePlayers.has(name)) {
+                onlinePlayers.set(name, {
+                    normalTime: 0,
+                    hardTime: 0,
+                    lastActive: Date.now()
+                });
+                updatePlayersList();
+            }
+        }
+
+        function updatePlayersList() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            
+            onlinePlayers.forEach((data, name) => {
+                const playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                playerItem.innerHTML = `
+                    ${name}<br>
+                    عادی: ${formatTime(data.normalTime)}<br>
+                    سخت: ${formatTime(data.hardTime)}
+                `;
+                playersList.appendChild(playerItem);
+            });
+        }
+
+        // Initialize the game when the page loads
+        window.onload = function() {
+            console.log('Page loaded, showing name prompt...');
+            document.getElementById('namePrompt').style.display = 'block';
+        };
+    </script>
+</body>
+</html> 
