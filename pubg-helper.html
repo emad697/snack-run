@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>راهنمای پابجی</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tahoma', sans-serif;
+        }
+
+        body {
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header h1 {
+            color: #ffd700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            color: #fff;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .buttons-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .category-button {
+            background: linear-gradient(145deg, #2a2a4a, #1a1a2e);
+            border: none;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-button img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .info-container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            min-height: 200px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+            text-align: right;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-container h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .info-container p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .info-list li {
+            margin-bottom: 10px;
+            padding-right: 20px;
+            position: relative;
+        }
+
+        .info-list li::before {
+            content: "•";
+            color: #ffd700;
+            position: absolute;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>راهنمای پابجی</h1>
+        <p>راهنمای کامل برای بازی پابجی موبایل</p>
+    </div>
+
+    <div class="buttons-container">
+        <button class="category-button" onclick="showInfo('guns')">
+            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M21 9L17 3H7L3 9h18zm-9 11l3-3H9l3 3z'/></svg>" alt="اسلحه‌ها">
+            اسلحه‌ها
+        </button>
+        <button class="category-button" onclick="showInfo('maps')">
+            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z'/></svg>" alt="نقشه‌ها">
+            نقشه‌ها
+        </button>
+        <button class="category-button" onclick="showInfo('cars')">
+            <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z'/></svg>" alt="وسایل نقلیه">
+            وسایل نقلیه
+        </button>
+    </div>
+
+    <div id="infoContainer" class="info-container">
+        <h2 id="infoTitle"></h2>
+        <div id="infoContent"></div>
+    </div>
+
+    <script>
+        const information = {
+            guns: {
+                title: "راهنمای اسلحه‌های پابجی",
+                content: `
+                    <p>اطلاعات مهم درباره اسلحه‌های پابجی:</p>
+                    <ul class="info-list">
+                        <li><strong>اسلحه‌های خودکار (AR):</strong> بهترین اسلحه‌ها برای همه شرایط. M416 و AKM انتخاب‌های محبوب به دلیل قابلیت اطمینان و قدرت آسیب‌رسانی هستند.</li>
+                        <li><strong>تفنگ‌های تک‌تیرانداز:</strong> AWM قوی‌ترین اسلحه است، در حالی که Kar98k رایج‌تر و همچنان موثر است.</li>
+                        <li><strong>مسلسل‌ها (SMG):</strong> UMP45 و Vector برای نبردهای نزدیک عالی هستند.</li>
+                        <li><strong>شات‌گان‌ها:</strong> DBS و S12K در فواصل نزدیک بسیار مرگبار هستند.</li>
+                        <li><strong>نکات:</strong> همیشه سعی کنید قطعات جانبی برای بهبود ثبات و دقت اسلحه پیدا کنید.</li>
+                    </ul>
+                `
+            },
+            maps: {
+                title: "راهنمای نقشه‌های پابجی",
+                content: `
+                    <p>اطلاعات کلیدی درباره نقشه‌های پابجی:</p>
+                    <ul class="info-list">
+                        <li><strong>ارنگل:</strong> نقشه کلاسیک با زمین متنوع و مکان‌های خوب برای غارت مانند پایگاه نظامی و پوچینکی.</li>
+                        <li><strong>میرامار:</strong> نقشه بیابانی با دید طولانی، مناسب برای تک‌تیراندازی.</li>
+                        <li><strong>سانهوک:</strong> نقشه جنگلی کوچک برای اکشن سریع.</li>
+                        <li><strong>ویکندی:</strong> نقشه برفی با فرصت‌های تاکتیکی منحصر به فرد.</li>
+                        <li><strong>نکات:</strong> بهترین مکان‌های فرود و محل‌های ظاهر شدن وسایل نقلیه را در هر نقشه یاد بگیرید.</li>
+                    </ul>
+                `
+            },
+            cars: {
+                title: "راهنمای وسایل نقلیه پابجی",
+                content: `
+                    <p>اطلاعات مهم درباره وسایل نقلیه:</p>
+                    <ul class="info-list">
+                        <li><strong>یوآز (UAZ):</strong> خودروی چهار نفره مقاوم با قابلیت خوب حرکت در خارج جاده.</li>
+                        <li><strong>داچیا:</strong> سریع در جاده‌ها اما کمتر موثر در خارج جاده.</li>
+                        <li><strong>باگی:</strong> دو نفره سریع، عالی برای بازیکنان تنها یا دو نفره.</li>
+                        <li><strong>موتورسیکلت:</strong> سریع‌ترین وسیله نقلیه اما پرخطر.</li>
+                        <li><strong>نکات:</strong> همیشه سطح سوخت را چک کنید و سعی کنید در دایره‌های آخر رانندگی نکنید.</li>
+                    </ul>
+                `
+            }
+        };
+
+        function showInfo(category) {
+            const container = document.getElementById('infoContainer');
+            const title = document.getElementById('infoTitle');
+            const content = document.getElementById('infoContent');
+
+            container.style.display = 'block';
+            title.textContent = information[category].title;
+            content.innerHTML = information[category].content;
+
+            // Scroll to info container
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html> 
